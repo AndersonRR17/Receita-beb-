@@ -2,7 +2,9 @@
 
 import { X, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import * as pdfjsLib from 'pdfjs-dist';
+
+// Importação dinâmica do pdfjs-dist para evitar problemas de SSR
+let pdfjsLib: any = null;
 
 interface PDFViewerProps {
   onBack: () => void;
@@ -184,9 +186,20 @@ export default function PDFViewer({
     }
   };
 
-  // Configurar PDF.js worker
+  // Carregar PDF.js dinamicamente apenas no cliente
   useEffect(() => {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+    const loadPdfJs = async () => {
+      if (typeof window !== 'undefined' && !pdfjsLib) {
+        try {
+          pdfjsLib = await import('pdfjs-dist');
+          pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+        } catch (error) {
+          console.error('Erro ao carregar pdfjs-dist:', error);
+        }
+      }
+    };
+    
+    loadPdfJs();
   }, []);
 
   // Converter URL do Google Drive para URL de download direto
@@ -218,6 +231,36 @@ export default function PDFViewer({
         setLoading(true);
         setError(null);
         setPdfDoc(null);
+
+        // Aguardar o carregamento do pdfjs-dist
+        if (!pdfjsLib) {
+          console.log('Aguardando carregamento do pdfjs-dist...');
+          // Aguardar um pouco para o pdfjs-dist carregar
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          // Se ainda não carregou, tentar carregar novamente
+          if (!pdfjsLib && typeof window !== 'undefined') {
+            try {
+              pdfjsLib = await import('pdfjs-dist');
+              pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+            } catch (error) {
+              console.error('Erro ao carregar pdfjs-dist:', error);
+              setUseIframe(true);
+              setTotalPages(224);
+              setLoading(false);
+              return;
+            }
+          }
+        }
+
+        // Se ainda não temos pdfjs-dist, usar iframe
+        if (!pdfjsLib) {
+          console.log('pdfjs-dist não disponível, usando iframe');
+          setUseIframe(true);
+          setTotalPages(224);
+          setLoading(false);
+          return;
+        }
 
         // Obter URLs diretas do Google Drive
         const directUrls = getDirectDownloadUrl(pdfUrl);
@@ -273,8 +316,8 @@ export default function PDFViewer({
 
   // Função para renderizar página do PDF
   const renderPdfPage = async (pageNumber: number): Promise<string | null> => {
-    if (!pdfDoc) {
-      console.log('PDF não carregado ainda');
+    if (!pdfDoc || !pdfjsLib) {
+      console.log('PDF ou pdfjs-dist não carregado ainda');
       return null;
     }
 
