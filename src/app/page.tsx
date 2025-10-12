@@ -253,9 +253,6 @@ export default function Home() {
               <span className="text-xs text-pink-600 font-medium mt-1 group-hover:text-pink-700">Perfil</span>
             </button>
           </div>
-          <div className="text-center pb-2 bg-gradient-to-r from-pink-50 to-yellow-50">
-            <span className="text-xs text-pink-400 font-medium">miembros.energiarentable.com</span>
-          </div>
         </div>
       </>
     );
@@ -309,13 +306,6 @@ export default function Home() {
               </span>
             </button>
 
-          </div>
-          
-          {/* Linha do domínio */}
-          <div className="text-center pb-2 bg-gradient-to-r from-pink-50 to-yellow-50">
-            <span className="text-xs text-pink-400 font-medium">
-              alimentobebe.nutricioninfantil.com
-            </span>
           </div>
         </div>
       </>
@@ -372,12 +362,7 @@ export default function Home() {
 
           </div>
           
-          {/* Linha do domínio */}
-          <div className="text-center pb-2 bg-gradient-to-r from-pink-50 to-yellow-50">
-            <span className="text-xs text-pink-400 font-medium">
-              alimentobebe.nutricioninfantil.com
-            </span>
-          </div>
+        
         </div>
       </>
     );
@@ -574,12 +559,7 @@ export default function Home() {
 
           </div>
           
-          {/* Linha do domínio */}
-          <div className="text-center pb-2 bg-gradient-to-r from-pink-50 to-yellow-50">
-            <span className="text-xs text-pink-400 font-medium">
-              alimentobebe.nutricioninfantil.com
-            </span>
-          </div>
+         
         </div>
 
       {/* Espaço adicional mínimo */}
