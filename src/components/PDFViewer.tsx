@@ -209,9 +209,6 @@ export default function PDFViewer({
                   title="PDF Viewer"
                   allow="autoplay"
                 />
-                <div className="absolute top-4 left-4 bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium shadow-lg">
-                  📖 Visualizador Google Drive
-                </div>
               </div>
             ) : imageLoading ? (
               <div className="flex flex-col items-center justify-center text-gray-500 p-8">
